@@ -23,6 +23,7 @@
 % Configure colors
 \usepackage{color}
 \definecolor{lightgray}{rgb}{0.9647058823529412,0.9725490196078431,0.9803921568627451}
+\definecolor{gray}{rgb}{0.48627450980392156,0.48627450980392156,0.48627450980392156}
 \definecolor{blue}{rgb}{0.0,0.3607843137254902,0.7843137254901961}
 \definecolor{green}{rgb}{0.27058823529411763,0.49411764705882355,0.2901960784313726}
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
@@ -38,15 +39,17 @@
   backgroundcolor=\color{lightgray},
   numberstyle=\footnotesize,
   tabsize=2,
+  xleftmargin=4ex
 }
 
 % Use style=linesWithNumbers to enable lines enumerating
 \lstdefinestyle{linesWithNumbers}{
   numbers=left,
+  numberstyle=\color{gray}
 }
 
 \lstdefinelanguage{JavaScript}{
-  keywords={break, continue, delete, else, for, function, if, in,
+  keywords={break, continue, delete, else, for, function, if, in, let,
   new, return, this, typeof, var, void, while, with, const, false, null, true, boolean, number, undefined,
   Array, Boolean, Date, Math, Number, String, Object},
   keywordstyle=\color{blue}\bfseries,
@@ -61,6 +64,8 @@
   fontadjust=true,
   numbersep=10pt,
 }[keywords, comments, strings]
+
+\usepackage{caption}
 
 \def\code#1{\texttt{#1}} % Inline code
 
@@ -186,7 +191,7 @@ AST игнорируются элементы, не влияющие на сем
 %  Дерево было построено с использованием парсера,
 % входящего в состав транспайлера Babel. 
 
-\lstinputlisting[language=JavaScript]{listings/ast-expression.js}
+\lstinputlisting[language=JavaScript, style=linesWithNumbers]{listings/ast-expression.js}
 
 Дерево было построено с использованием парсера, входящего в состав транспайлера Babel.
 
@@ -208,13 +213,13 @@ AST игнорируются элементы, не влияющие на сем
 лексического анализа часто называют токенизацией. Здесь токен - это объект, описывающий любую значащую 
 подпоследовательность символов исходного кода. Например, фрагмент кода
 
-\lstinputlisting[language=JavaScript]{listings/fragment-for-tokenization.js}
+\lstinputlisting[language=JavaScript, style=linesWithNumbers]{listings/fragment-for-tokenization.js}
 будет преобразован в следующий массив токенов:
 
-\lstinputlisting[language=JavaScript]{listings/tokens.js}
+\lstinputlisting[language=JavaScript, style=linesWithNumbers]{listings/tokens.js}
 Свойства start и end описывают положение токена в строке, loc $-$ строку, в которой был найден токен. 
 Поле type указывает на объект, который хранит набор свойств, описывающих каждый отдельный токен:
-\lstinputlisting[language=JavaScript]{listings/token-type.js}
+\lstinputlisting[language=JavaScript, style=linesWithNumbers]{listings/token-type.js}
 
 Далее следует так называемый синтаксический анализ, цель которого $-$ построение абстрактного 
 синтаксического дерева на основе массива токенов, полученного на предыдущем этапе. В ходе этого 
@@ -223,7 +228,7 @@ AST игнорируются элементы, не влияющие на сем
 ReturnStatement. Для рассмотренного выше фрагмента кода построенное парсером абстрактное синтаксическое 
 дерево будет выглядеть следующим образом:
 
-\lstinputlisting[language=JavaScript]{listings/ast-for-fragment.js}
+\lstinputlisting[language=JavaScript, style=linesWithNumbers]{listings/ast-for-fragment.js}
 
 \subsubsection*{Трансформация}
 Как только абстрактное синтаксическое дерево построено, начинается этап трансформации. На этом этапе 
@@ -246,11 +251,13 @@ ReturnStatement. Для рассмотренного выше фрагмента
 Суть шаблона заключается в предоставлении возможности определять новые операции над объектами,
  не внося изменения в классы этих объектов.
 
-\subsubsection*{Решаемая проблема}
-Необходимо определить ряд несвязяанных между собой операций над объектами, принадлежащими определенной структуре.
+% \subsubsection*{Решаемая проблема}
+Проблема, которую решает шаблон Посетитель, можно сформулировать следующим образом:
+
+Необходимо определить ряд несвязанных между собой операций над объектами, принадлежащими определенной структуре.
 При этом, требуется избежать модифицирования кода классов этих объектов при добавлении новых операций. 
 
-Шаблон Посетитель описывает решение этой проблемы следующим образом:
+Шаблон Посетитель описывает решение этой проблемы так:
 вместо того чтобы добавлять новое поведение в каждый объект структуры, необходимо вынести это поведение 
 в отдельный класс посетителя. Таким образом объекты не будут выполнять операции самостоятельно, а вместо этого 
 они будут передаваться в методы посетителя.
@@ -269,7 +276,7 @@ ReturnStatement. Для рассмотренного выше фрагмента
     методов \code{visit} для каждого конкретного типа элементов. 
   \item \textbf{ConcreteVisitor} $-$ конкретный класс посетителя, реализует интерфейс, определенный в Visitor.
   \item \textbf{Element} $-$ интерфейс, содержащий объявление метода \code{accept}.
-  \item \textbf{ElementA / ElementB} $-$ конктретные классы элементов структуры, реализуют метод \code{accept}
+  \item \textbf{ElementA / ElementB} $-$ конкретные классы элементов структуры, реализуют метод \code{accept}
     интерфейса Element, вызывая внутри него метод Посетителя, соответствующий своему типу.
   \item \textbf{Client} $-$ класс-пользователь структуры объектов. В нем происходит вызов метода \code{accept}
     объекта с конкретным экземпляром Посетителя.
@@ -282,6 +289,24 @@ ReturnStatement. Для рассмотренного выше фрагмента
   \label{visitor_uml}
 \end{figure}
 
+Шаблон Посетитель широко используется в реализация различных компиляторов для определения операций над 
+абстрактными синтаксическими деревьями. Babel, компилирующий JavaScript код в другой JavaScript код,
+также не является исключением. Однако, из-за ограничений языка программирования JavaScript, таких как
+отсутствие поддержки перегрузки методов и возможности определять интерфейсы, реализация шаблона Посетитель
+в Babel несколько отличается от классической.
+
+В Babel посетить представляет из себя обычный JavaScript объект, который содержит методы, чьи названия 
+совпадают с типом узлов AST, которые они ``посещяют''.
+
+\lstinputlisting[language=JavaScript, style=linesWithNumbers]{listings/visitor_expample.js}
+
+Внутри методов Посетителя определяются операции, которые необходимо произвести над узлами данного типа.
+Узлы абстрактного синтаксического дерева в Babel не содержат метода \code{accept}. Вместо этого за вызов
+подходящего метода Посетителя отвечает функция \code{traverse}, выполняющая обход дерева. Ниже приведен 
+псевдокод, упрощенно иллюстрирующий механизм работы этой функции.
+
+\lstinputlisting[language=JavaScript, style=linesWithNumbers]{listings/traverse.js}
+ *Плагины Babel - это по сути визиторы*
 \pagebreak
 
 \begin{thebibliography}{9}
