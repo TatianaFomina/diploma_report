@@ -1,0 +1,5 @@
+const visitor = {
+  CallExpression() {},
+  NumberLiteral() {},
+  ...
+};
