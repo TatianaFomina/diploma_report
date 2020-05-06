@@ -12,13 +12,14 @@ export default class Tokenizer {
       next === charCodes.dot &&
       this.input.charCodeAt(this.state.pos + 2) === charCodes.dot
     ) {
-      if (this.input.charCodeAt(this.state.pos + 3) === charCodes.atSign) {
-        this.state.pos += 4;
-        this.finishToken(tt.ellipsisAt);
-      } else {
+    %\colorbox{highlight}{if (this.input.charCodeAt(this.state.pos + 3) === charCodes.atSign)}%
+      %\colorbox{highlight}{\{}%
+        %\colorbox{highlight}{this.state.pos += 4;}%
+        %\colorbox{highlight}{this.finishToken(tt.ellipsisAt);}%
+      %\colorbox{highlight}{\} else \{}% 
         this.state.pos += 3;
         this.finishToken(tt.ellipsis);
-      }
+      %\colorbox{highlight}{\}}%
     } else {
       ++this.state.pos;
       this.finishToken(tt.dot);
