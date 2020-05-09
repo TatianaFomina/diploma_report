@@ -62,8 +62,10 @@
   morecomment=[l]//,
   morecomment=[s]{/**}{*/}, % JavaDoc style comments
   morestring=[b]',
-  morestring=[b]"
+  morestring=[b]",
+  morestring=[b]`,
   fontadjust=true,
+  showstringspaces=false,
   numbersep=10pt,
 }[keywords, comments, strings]
 
@@ -318,11 +320,21 @@ ReturnStatement. Для рассмотренного выше фрагмента
 
 \pagebreak
 
-\section{Babel API}
+\section{Использование Babel}
+
+@babel/core 
+
+\paragraph{@babel/cli} \mbox{}
+Инструмент для траспиляции кода с использованием командной строки.
+
+@babel/parser
+@babel/traverse
+@babel/generator
+@babel/plugin
 
 \pagebreak
 
-\section{Создание синтаксической конструкции deep spread operator с помощью Babel}
+\section{Расширение синтаксиса языка JavaScript с помощью Babel}
 % В данной главе описан процесс создания плагина для транспайлера Babel. В качестве 
 \subsection{Постановка задачи}
 Необходимо разработать плагин для транспайлера Babel, позволяющий использовать синтаксическую конструкцию
@@ -530,11 +542,25 @@ $-$ простой \code{ellispis} (с английского $-$ многото
   \label{babel_plugin_dirs}
 \end{figure}
 
+Листинг \ref{plugin} содержит исходный код плагина. Ключевыми здесь являются строки 9-19, в которых определен 
+объект \code{visitor}. Внутри этого объекта определена функция \code{SpreadElement}, в которой описываются
+действия, которые необходимо произвести над узлами синтаксического дерева транспилируемой программы, 
+тип которых соответствует названию функции. Такая конструкция является элементом паттерна Посетитель, с которым 
+можно ознакомиться более подробно в первой главе данной работы. В данном случае в функции \code{SpreadElement}
+проверяется условие наличия у текущего узла флага \code{deep = true}. Если условие выполняется, то 
+производится замена значения свойства \code{argument} текущего узла на вызов вспомогательной функции \code{deepCopy} 
+с прежним значением свойства \code{argument} в качестве параметра. 
+
 \lstinputlisting[language=JavaScript, style=linesWithNumbers, label={plugin}, caption={Плагин Babel}]{listings/plugin/plugin.js}
-% В листинге \ref{plugin} содержится 
-\lstinputlisting[language=JavaScript, style=linesWithNumbers, label={helper}, caption={}]{listings/plugin/helper.js}
+
+Для того чтобы вспомогательная функция \code{deepCopy} была доступна на момент вызова, следует добавить ее определение в 
+пакет \code{@babel/helpers}. В этом пакете объявляются всевозможные функции, которые используются многими 
+плагинами в ходе трансформаций исходного кода. 
+
+
+\lstinputlisting[language=JavaScript, style=linesWithNumbers, label={helper}, caption={Объявление вспомогательной функции}]{listings/plugin/helper.js}
    
-\subsection{Результат}
+\subsection{Демонстрация результатов}
 \pagebreak
 \section{Заключение}
 \pagebreak
