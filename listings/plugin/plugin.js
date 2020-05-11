@@ -6,7 +6,6 @@ export default declare((api) => {
 
   return {
     name: 'transform-deep-spread-operator',
-
     visitor: {
       SpreadElement(path) {
         if (path.node.deep) {

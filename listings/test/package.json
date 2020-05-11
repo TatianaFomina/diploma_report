@@ -1,0 +1,17 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "Project to test Babel fork functionality",
+  "main": "src/index.js",
+  "scripts": {
+    "babel": "babel src --out-dir out",
+    "babel-watch": "babel src --out-dir out --watch"
+  },
+  "author": "Tatiana Fomina",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "file:../babel/packages/babel-core",
+    "@babel/plugin-transform-deep-spread-operator": "file:../babel/packages/babel-plugin-transform-deep-spread-operator"
+  }
+}
