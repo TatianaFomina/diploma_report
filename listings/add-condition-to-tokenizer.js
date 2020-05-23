@@ -1,4 +1,4 @@
-// @flow
+//@flow
 import { types as tt } from "./types";
 
 export default class Tokenizer {
