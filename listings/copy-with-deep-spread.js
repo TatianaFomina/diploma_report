@@ -7,7 +7,7 @@ const user3 = {
   },
   roles: ['USER']
 };
-const user4 = {...@user3};
+const user4 = {...#user3};
 console.log(user3 === user4); // false
 console.log(user3.address === user4.address); // false
 console.log(user3.roles === user4.roles); // false

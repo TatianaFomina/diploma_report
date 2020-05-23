@@ -1,3 +1,4 @@
+// @flow
 import { types as tt } from "./types";
 
 export default class Tokenizer {
@@ -12,10 +13,10 @@ export default class Tokenizer {
       next === charCodes.dot &&
       this.input.charCodeAt(this.state.pos + 2) === charCodes.dot
     ) {
-    %\colorbox{highlight}{if (this.input.charCodeAt(this.state.pos + 3) === charCodes.atSign)}%
-      %\colorbox{highlight}{\{}%
+    %\colorbox{highlight}{if (this.input.charCodeAt(this.state.pos + 3) === }%
+      %\colorbox{highlight}{charCodes.numberSign)\{}%
         %\colorbox{highlight}{this.state.pos += 4;}%
-        %\colorbox{highlight}{this.finishToken(tt.ellipsisAt);}%
+        %\colorbox{highlight}{this.finishToken(tt.ellipsisHash);}%
       %\colorbox{highlight}{\} else \{}% 
         this.state.pos += 3;
         this.finishToken(tt.ellipsis);
