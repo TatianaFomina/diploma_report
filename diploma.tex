@@ -643,9 +643,9 @@ $-$ простой \code{ellispis} (с английского $-$ многото
 \begin{lstlisting}
   > git push --set-upstream origin deep-spread-operator
 \end{lstlisting}
-\subsection{Результат}
+\subsection{Демонстрация результатов}
 
-Для демонстрации результатов проделанной работы потребуется создать тестовый проект. Структура тестового проекта 
+Для проверки результатов проделанной работы потребуется создать тестовый проект. Структура тестового проекта 
 представлена на рис \ref{test_struct}.
 \begin{figure}[h!]
   \centering
@@ -667,13 +667,24 @@ $-$ простой \code{ellispis} (с английского $-$ многото
   \label{test_struct}
 \end{figure}
 
+% В файле \code{package.json} в качестве зависимостей следует указать @babel/cli, @babel/core и 
+% @babel/plugin-transform-deep-spread-operator. Для двух последних пакетов вместо версии 
+% следует указать путь к месторасположению собранного пакета в файловой системе. Таким образом 
+% зависимости не будут скачиваться из реестра npm, вместо этого будут использоваться локально расположенные 
+% файлы.
+
 В файле \code{package.json} в качестве зависимостей следует указать @babel/cli, @babel/core и 
 @babel/plugin-transform-deep-spread-operator. Для двух последних пакетов вместо версии 
-следует указать путь к месторасположению собранного пакета в файловой системе. Таким образом 
-зависимости не будут скачиваться из реестра npm, вместо этого будут использоваться локально расположенные 
-файлы.
+следует указать путь к месторасположению собранного пакета в файловой системе. Таким образом вместо 
+того чтобы скачивать зависимости из удаленного реестра, npm будет брать локально расположенные файлы.
+В данном случае это необходимо, поскольку локальные пакеты содержат изменения, обеспечивающие поддержку 
+нового оператора.
 
 \lstinputlisting[language=JavaScript, style=linesWithNumbers, label={package}, caption={Файл package.json}]{listings/test/package.json}
+Далее следует произвести установку зависимостей, выполнив команду
+\begin{lstlisting}
+  > npm install
+\end{lstlisting}
 
 С помощью файла \code{babel.config.json} задается конфигурация Babel. В данном случае задан только 
 список подключенных плагинов, содержащий один элемент $-$ \code{plugin-transform-deep-spread-operator}.
@@ -684,12 +695,43 @@ $-$ простой \code{ellispis} (с английского $-$ многото
 В файл \code{src/index.js} (листинг \ref{src}) поместим исходный код на языке JavaScript, содержащий 
 использование нового \code{deep spread} оператора.
 
-\lstinputlisting[language=JavaScript, style=linesWithNumbers, label={src}, caption={Файл src/index.js}]{listings/test/src.js}
+\lstinputlisting[language=JavaScript, style=linesWithNumbers, label={src}, caption={Код до транспиляции}]{listings/test/src.js}
 
+Далее в корневой директории данного Тестового проекта выполним команду \code{npm run babel}
 
-\lstinputlisting[language=JavaScript, style=linesWithNumbers, label={out}, caption={Файл out/index.js}]{listings/test/trgt.js}
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1.0]{img/test_run_babel.PNG}
+  \caption{Запуск транспиляции}
+  \label{test_run_babel}
+\end{figure}
 
-*To Be Continued*
+Выполнение этой команды запустит скрипт с названием \code{babel}, описанный в 7 строке файла 
+\code{package.json}. Этот скрипт произведет транспиляцию файла \code{src/index.js} с помощью Babel и 
+запишет результат в файл \code{out/index.js}. 
+
+\lstinputlisting[language=JavaScript, style=linesWithNumbers, label={out}, caption={Код после транспиляции}]{listings/test/trgt.js}
+
+Листинг \ref{out} содержит код, полученный в результате транспиляции. Можно заметить, что в глобальную
+область видимости была добавлена функция рекурсивного копирования \code{\_deepCopy} (строка 1). 
+Далее была произведена замена \code{deep spread} оператора на обычный \code{spread} оператор, операнд
+которого был обернут в функцию \code{\_deepCopy} (строка 9). 
+
+Проверим, действительно ли с помощью подобной замены получается рекурсивная копия объекта. Для этого
+исполним полученный в ходе транспиляции файл \code{out/index.js} с помошью NodeJS:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1.0]{img/test_results.PNG}
+  \caption{Проверка результатов транспиляции}
+  \label{test_results}
+\end{figure}
+Как можно увидеть на рисунке \ref{test_results}, при выполнении файла в терминал выводится значение 
+\code{false} два раза. Первый \code{false} $-$ это результат сравнения ссылок на исходный и 
+скопированный объекты (строка 11 файла \code{out/index.js}). Второй \code{false} $-$ результат сравнения
+вложенных объектов (строка 13 файла \code{out/index.js}). Таким образом, мы получили рекурсивную копию
+объекта. 
+
 
 \pagebreak
 \section{Заключение}
