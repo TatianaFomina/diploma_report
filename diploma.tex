@@ -40,14 +40,14 @@
   backgroundcolor=\color{lightgray},
   numberstyle=\footnotesize,
   tabsize=2,
-  xleftmargin=4ex,
   escapechar=\%
 }
 
 % Use style=linesWithNumbers to enable lines enumerating
 \lstdefinestyle{linesWithNumbers}{
   numbers=left,
-  numberstyle=\color{gray}
+  numberstyle=\color{gray},
+  xleftmargin=4ex
 }
 
 \lstdefinelanguage{JavaScript}{
@@ -324,9 +324,88 @@ ReturnStatement. Для рассмотренного выше фрагмента
 
 \pagebreak
 
-\section{Babel API}
+\section{Использование Babel}
+\subsection{Входящие в состав модули}
+\paragraph{@babel/core} \mbox{}
 
-*Описать пакеты @babel/core, @babel/cli, @babel/parser, @babel/traverse, @babel/generator, @babel/plugin и варианты их использования* 
+Данный модуль предоставляет ключевую функциональность транспайлера Babel. Он объединяет независимые 
+модули \code{@babel/parser}, \linebreak \code{@babel/traverse} и \code{@babel/generator}, каждый из которых 
+выполняет отдельный этап транспиляции. Более подробно с этапами работы Babel можно ознакомиться 
+в разделе 1 данной работы.
+
+Для использования данного модуля, необходимо сначала установить его как зависимость: 
+\begin{lstlisting}
+  > npm install @babel/core
+\end{lstlisting}
+После этого можно импортировать модуль в JavaScript файл и использовать его api:
+\begin{lstlisting}
+  const babel = require("@babel/core");
+
+  babel.transform("code();", options);
+\end{lstlisting}
+Кроме \code{transform} api Babel предоставляет и другие методы, например:
+\begin{itemize}
+  \item \code{transformFile} $-$ позволяет транспилировать код, содержащийся в заданном файле.
+  \item \code{transformFromAst} $-$ позволяет проводить трансформацию переданного синтаксического дерева
+    (пропускает этап парсинга кода).
+  \item \code{parse} $-$ строит абстрактное синтаксическое дерево программы, не применяя никаких 
+    трансформаций.
+\end{itemize}
+
+В чистом виде модуль \code{@babel/core} используется редко. Чаще используются другие 
+модули, которые предоставляют интерфейс к \code{@babel/core} и удобно интегрируются в процесс сборки 
+программного проекта. В качестве примера такого модуля можно привести \code{babel-loader}, который 
+позволяет транспилировать код при сборке проекта с помощью Webpack.
+
+\paragraph{@babel/cli} \mbox{}
+
+Инструмент, позволяющий использовать возможности модуля \linebreak \code{@babel/core} через интерфейс 
+командной строки. Ниже представлен пример установки и использования данного пакета. 
+\begin{lstlisting}[language=JavaScript]
+  > npm install @babel/core @babel/cli
+  > ./node_modules/.bin/babel src --out-dir lib
+\end{lstlisting}
+
+При выполнении второй команды произойдет парсинг всех JavaScript файлов в директории \code{src}, 
+к коду будут применены все заданные в конфигурационном файле трансформации, и результат будет записан 
+в директорию \code{lib}. 
+
+\paragraph{Плагины и пресеты} \mbox{}
+
+Плагины Babel описывают отдельные трансформации, проводимые над синтаксическим деревом программы во 
+время транспиляции. Каждый такой плагин представляет из себя отдельный модуль, имя которого 
+соответствует шаблону \code{@babel/plugin-transform-plugin\_name}. Например, плагин, который заменяет 
+стрелочные функции на обычные, называется \linebreak \code{@babel/plugin-transform-arrow-functions}.
+
+Плагины Babel необязательно устанавливать по одному. Можно использовать пресет, являющийся группой 
+плагинов, объединенной по какому-либо принципу. Так, пресет \code{@babel/preset-react} группирует 
+все плагины, необходимые при разработке react приложения.
+
+\subsection{Конфигурирование}
+Список плагинов и пресетов, которые следует применить во время трансформции исходного кода, а также 
+их опции, можно задать с помощью конфигурационного файла. Существует два вида таких конфигурационных
+файлов: \code{babel.config.json} и \code{.babelrc}. Следует использовать файл \code{babel.config.json}, 
+если нужно задать конфигурацию для всего разрабатываемого проекта целиком, и \code{.babelrc}, когда 
+есть необходимость задавать отличные конфигурации для разных файлов и директорий. В общем виде 
+структура обоих файлов одинакова и имеет вид:
+
+\begin{lstlisting}[language=JavaScript]
+  {
+    "presets": [...],
+    "plugins": [...]
+  }
+\end{lstlisting}
+
+% Существует два способа задать конфигурацию Babel: с помощью файла \code{babel.config.json} и файла 
+% \code{.babelrc}. Следует использовать \linebreak \code{babel.config.json}, если нужно задать конфигурацию для 
+% всего разрабатываемого проекта целиком, и \code{.babelrc}, когда есть необходимость задавать отличные 
+% конфигурации для разных файлов и директорий. С помощью таких конфигурационных файлов задается список 
+% применяемых в ходе транспиляции плагинов и пресетов. В общем виде структура обоих файлов одинакова и имеет вид
+
+
+% 
+% Также если какой-либо из плагинов  
+% *Описать пакеты @babel/core, @babel/cli, @babel/parser, @babel/traverse, @babel/generator, @babel/plugin и варианты их использования* 
  
 
 \pagebreak
